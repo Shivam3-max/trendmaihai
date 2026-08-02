@@ -260,6 +260,113 @@ export function getOrder(id: string): MockOrder | undefined {
   return getMockOrders().find((o) => o.id === id) ?? { id, date: "2026-08-01", status: "packed", itemIds: [PRODUCTS[0].id, PRODUCTS[4].id], total: PRODUCTS[0].price + PRODUCTS[4].price };
 }
 
+/* -------- admin analytics (mock) -------- */
+export interface AdminStats {
+  revenue: number; orders: number; cvr: number; aov: number;
+  discovered: number; visitors: number;
+  revenueSeries: number[]; ordersSeries: number[];
+}
+export function getAdminStats(): AdminStats {
+  const revenueSeries = [42, 51, 47, 63, 58, 72, 69, 84, 78, 96, 91, 108].map((n) => n * 1000);
+  const ordersSeries = [28, 34, 31, 42, 39, 48, 45, 56, 52, 64, 61, 72];
+  return {
+    revenue: revenueSeries.reduce((a, b) => a + b, 0),
+    orders: ordersSeries.reduce((a, b) => a + b, 0),
+    cvr: 3.8, aov: 2140, discovered: 18420, visitors: 24800,
+    revenueSeries, ordersSeries,
+  };
+}
+
+export interface AdminOrder { id: string; customer: string; items: number; total: number; status: string; date: string; }
+export function getAdminOrders(): AdminOrder[] {
+  const names = ["Aanya K.", "Rohan M.", "Ishita R.", "Kabir S.", "Meera N.", "Aditya P.", "Sana K.", "Devansh M.", "Priya V.", "Arjun D."];
+  const statuses = ["Delivered", "Shipped", "Packed", "Placed", "Out for delivery"];
+  return names.flatMap((n, i) =>
+    [0, 1].map((j) => {
+      const k = i * 2 + j;
+      const items = 1 + (k % 4);
+      return {
+        id: "TMH" + (490000 - k * 137),
+        customer: n,
+        items,
+        total: 890 + (k * 617) % 8000,
+        status: statuses[k % statuses.length],
+        date: `2026-07-${String(28 - (k % 20)).padStart(2, "0")}`,
+      };
+    })
+  );
+}
+
+export interface AdminCustomer { name: string; email: string; orders: number; spent: number; level: string; }
+export function getAdminCustomers(): AdminCustomer[] {
+  const names = ["Aanya Kapoor", "Rohan Mehta", "Ishita Rao", "Kabir Singh", "Meera Nair", "Aditya Patel", "Sana Khan", "Devansh Malhotra", "Priya Verma", "Arjun Desai"];
+  return names.map((n, i) => ({
+    name: n,
+    email: n.toLowerCase().replace(/\s/g, ".") + "@email.com",
+    orders: 1 + (i * 3) % 12,
+    spent: 1200 + (i * 2137) % 40000,
+    level: LEVELS[Math.min(LEVELS.length - 1, Math.floor(i / 2))].name,
+  }));
+}
+
+export interface AdminCoupon { code: string; type: string; value: string; used: number; limit: number; active: boolean; }
+export function getAdminCoupons(): AdminCoupon[] {
+  return [
+    { code: "WELCOME10", type: "Percent", value: "10%", used: 842, limit: 5000, active: true },
+    { code: "DISCOVER50", type: "Flat", value: "₹50", used: 1204, limit: 2000, active: true },
+    { code: "FIRSTDROP", type: "Percent", value: "15%", used: 318, limit: 500, active: true },
+    { code: "FESTIVE25", type: "Percent", value: "25%", used: 2000, limit: 2000, active: false },
+    { code: "FREESHIP", type: "Shipping", value: "Free", used: 560, limit: 1000, active: true },
+  ];
+}
+
+export interface AdminReview { id: string; product: string; author: string; rating: number; text: string; status: "pending" | "approved"; }
+export function getAdminReviews(): AdminReview[] {
+  const texts = [
+    "Absolutely stunning, feels premium.",
+    "Good but shipping was a day late.",
+    "Not what I expected — a bit smaller.",
+    "Obsessed! Buying another for a gift.",
+    "Quality is unreal for the price.",
+    "Perfect. Exactly like the photos.",
+  ];
+  return PRODUCTS.slice(0, 8).map((p, i) => ({
+    id: `rv-${p.id}`,
+    product: p.title,
+    author: ["Aanya", "Rohan", "Ishita", "Kabir", "Meera", "Aditya", "Sana", "Devansh"][i],
+    rating: i % 5 === 2 ? 3 : 5,
+    text: texts[i % texts.length],
+    status: i < 3 ? "pending" : "approved",
+  }));
+}
+
+/* home section list for the admin Homepage Builder */
+export interface HomeSection { id: string; label: string; group: string; }
+export function getHomeSections(): HomeSection[] {
+  return [
+    { id: "hero", label: "Hero", group: "Above the fold" },
+    { id: "ticker", label: "Live Social-Proof Ticker", group: "Above the fold" },
+    { id: "trending", label: "Trending Today", group: "Discovery" },
+    { id: "viral", label: "Products Going Viral", group: "Discovery" },
+    { id: "moods", label: "Shop by Mood", group: "Discovery" },
+    { id: "feed1", label: "Infinite Discover Feed I", group: "Discovery" },
+    { id: "statement", label: "Editorial Statement", group: "Editorial" },
+    { id: "creators", label: "Creator Picks", group: "Community" },
+    { id: "setup", label: "Shoppable Setups", group: "Community" },
+    { id: "mostsaved", label: "Most Saved", group: "Discovery" },
+    { id: "lifestyle", label: "Explore by Lifestyle", group: "Discovery" },
+    { id: "drops", label: "Limited Drops (dark)", group: "Merchandising" },
+    { id: "collections", label: "Collections", group: "Merchandising" },
+    { id: "deals", label: "Flash Deals", group: "Merchandising" },
+    { id: "new", label: "New Arrivals", group: "Merchandising" },
+    { id: "categories", label: "Trending Categories", group: "Discovery" },
+    { id: "community", label: "Community Setups", group: "Community" },
+    { id: "testimonials", label: "Testimonials", group: "Trust" },
+    { id: "feed2", label: "Infinite Discover Feed II", group: "Discovery" },
+    { id: "newsletter", label: "Newsletter / Join", group: "Conversion" },
+  ];
+}
+
 export const SEARCH_SUGGESTIONS = [
   "something aesthetic for my study table",
   "a gift under ₹1000",

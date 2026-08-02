@@ -1,10 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Space_Grotesk, Inter, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
-import { Header } from "@/components/chrome/Header";
-import { Footer } from "@/components/chrome/Footer";
-import { BottomTabBar } from "@/components/chrome/BottomTabBar";
-import { GlobalOverlays } from "@/components/overlays/GlobalOverlays";
+import { ChromeGate } from "@/components/chrome/ChromeGate";
 
 const display = Space_Grotesk({
   subsets: ["latin"],
@@ -52,11 +49,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         style={{ ["--font-sub" as string]: "var(--font-display)" }}
         className="min-h-screen bg-bg text-text antialiased"
       >
-        <Header />
-        <main className="pb-20 md:pb-0">{children}</main>
-        <Footer />
-        <BottomTabBar />
-        <GlobalOverlays />
+        <ChromeGate>{children}</ChromeGate>
       </body>
     </html>
   );
