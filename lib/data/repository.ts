@@ -194,6 +194,72 @@ export function searchIntent(rawQuery: string): SearchIntent {
   return { rawQuery, parsed: { moods: moodArr, priceMax, occasion, aesthetic: aesArr }, chips, results };
 }
 
+/* -------- gamification -------- */
+export interface Level { name: string; min: number; }
+export const LEVELS: Level[] = [
+  { name: "Curious", min: 0 },
+  { name: "Explorer", min: 100 },
+  { name: "Tastemaker", min: 400 },
+  { name: "Connoisseur", min: 1200 },
+  { name: "Trendsetter", min: 3000 },
+  { name: "Legend", min: 8000 },
+];
+
+export function levelFor(points: number) {
+  let idx = 0;
+  for (let i = 0; i < LEVELS.length; i++) if (points >= LEVELS[i].min) idx = i;
+  const current = LEVELS[idx];
+  const next = LEVELS[idx + 1];
+  const progress = next ? (points - current.min) / (next.min - current.min) : 1;
+  return { level: idx + 1, name: current.name, current, next, progress: Math.min(1, progress) };
+}
+
+export interface Badge { id: string; name: string; desc: string; icon: string; need: number; metric: "saved" | "points" | "orders" | "moods"; }
+export const BADGES: Badge[] = [
+  { id: "first-save", name: "First Crush", desc: "Save your first product", icon: "heart", need: 1, metric: "saved" },
+  { id: "curator", name: "Curator", desc: "Save 10 products", icon: "bookmark", need: 10, metric: "saved" },
+  { id: "hoarder", name: "Wishlist Wizard", desc: "Save 25 products", icon: "sparkles", need: 25, metric: "saved" },
+  { id: "taste", name: "Taste Explorer", desc: "Explore 5 moods", icon: "compass", need: 5, metric: "moods" },
+  { id: "spender", name: "Big Spender", desc: "Reach 500 points", icon: "flame", need: 500, metric: "points" },
+  { id: "buyer", name: "First Order", desc: "Place your first order", icon: "package", need: 1, metric: "orders" },
+  { id: "vip", name: "VIP", desc: "Reach 2000 points", icon: "crown", need: 2000, metric: "points" },
+  { id: "legend", name: "Legend", desc: "Reach 8000 points", icon: "trophy", need: 8000, metric: "points" },
+];
+
+export interface LeaderRow { rank: number; name: string; avatar: string; points: number; you?: boolean; }
+export function getLeaderboard(youPoints: number): LeaderRow[] {
+  const base = [
+    { name: "aesthetic.aanya", pts: 9240 },
+    { name: "kabir.plays", pts: 7180 },
+    { name: "brewedbyrohan", pts: 5030 },
+    { name: "meera.makes", pts: 3890 },
+    { name: "desk.diaries", pts: 2110 },
+    { name: "cozy.cornerr", pts: 1450 },
+  ];
+  const rows = base.map((b, i) => ({ name: b.name, points: b.pts, avatar: PRODUCTS[i * 3].image }));
+  rows.push({ name: "you", points: youPoints, avatar: PRODUCTS[1].image });
+  return rows
+    .sort((a, b) => b.points - a.points)
+    .map((r, i) => ({ rank: i + 1, name: r.name, avatar: r.avatar, points: r.points, you: r.name === "you" }));
+}
+
+/* -------- mock orders -------- */
+export interface MockOrder { id: string; date: string; status: "placed" | "packed" | "shipped" | "out" | "delivered"; itemIds: string[]; total: number; }
+export function getMockOrders(): MockOrder[] {
+  const pick = (n: number) => PRODUCTS.slice(n, n + 2);
+  const mk = (id: string, status: MockOrder["status"], off: number, date: string): MockOrder => {
+    const items = pick(off);
+    return { id, date, status, itemIds: items.map((p) => p.id), total: items.reduce((s, p) => s + p.price, 0) };
+  };
+  return [
+    mk("TMH482910", "shipped", 0, "2026-07-28"),
+    mk("TMH471255", "delivered", 6, "2026-07-12"),
+  ];
+}
+export function getOrder(id: string): MockOrder | undefined {
+  return getMockOrders().find((o) => o.id === id) ?? { id, date: "2026-08-01", status: "packed", itemIds: [PRODUCTS[0].id, PRODUCTS[4].id], total: PRODUCTS[0].price + PRODUCTS[4].price };
+}
+
 export const SEARCH_SUGGESTIONS = [
   "something aesthetic for my study table",
   "a gift under ₹1000",
