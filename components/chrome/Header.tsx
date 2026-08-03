@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Search, Heart, ShoppingBag, Flame } from "lucide-react";
 import { useStore } from "@/store/useStore";
+import { ProfileMenu } from "@/components/chrome/ProfileMenu";
 import { cn } from "@/lib/utils/cn";
 
 const LENSES = [
@@ -78,11 +79,11 @@ export function Header() {
         <div className="flex items-center gap-1.5 md:gap-2.5">
           <button
             onClick={() => setSearchOpen(true)}
-            className="group hidden items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text-muted transition-colors hover:border-accent/40 hover:text-text md:flex cursor-pointer"
+            className="group hidden min-w-0 shrink items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text-muted transition-colors hover:border-accent/40 hover:text-text md:flex cursor-pointer"
           >
-            <Search className="h-4 w-4 text-accent" />
-            <span className="font-sub">What are you looking for?</span>
-            <kbd className="ml-2 rounded border border-border bg-bg-secondary px-1.5 font-mono text-[0.65rem] text-text-muted">
+            <Search className="h-4 w-4 shrink-0 text-accent" />
+            <span className="truncate whitespace-nowrap font-sub">What are you looking for?</span>
+            <kbd className="ml-2 hidden shrink-0 rounded border border-border bg-bg-secondary px-1.5 font-mono text-[0.65rem] text-text-muted xl:inline">
               ⌘K
             </kbd>
           </button>
@@ -130,6 +131,8 @@ export function Header() {
               </motion.span>
             )}
           </button>
+
+          <ProfileMenu />
         </div>
       </div>
     </header>

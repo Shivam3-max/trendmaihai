@@ -201,3 +201,12 @@ export interface CartLine {
   variantId?: string;
   qty: number;
 }
+
+/* --- auth (mock, frontend-only) --- */
+export interface AuthUser {
+  name: string;
+  email: string;
+  role: "customer" | "creator";
+  handle?: string;
+  avatar?: string;
+}

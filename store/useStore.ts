@@ -1,7 +1,7 @@
 "use client";
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { CartLine, MoodSlug } from "@/lib/data/types";
+import type { CartLine, MoodSlug, AuthUser } from "@/lib/data/types";
 
 /* ------------------------------------------------------------------ */
 /* Unified client store: cart · wishlist · taste · rewards · ui        */
@@ -35,6 +35,11 @@ interface StoreState {
   points: number;
   streak: number;
   addPoints: (n: number) => void;
+
+  // auth (mock)
+  user: AuthUser | null;
+  login: (user: AuthUser) => void;
+  logout: () => void;
 
   // ui (ephemeral, not persisted)
   cartOpen: boolean;
@@ -112,6 +117,10 @@ export const useStore = create<StoreState>()(
       streak: 1,
       addPoints: (n) => set((s) => ({ points: s.points + n })),
 
+      user: null,
+      login: (user) => set({ user }),
+      logout: () => set({ user: null }),
+
       cartOpen: false,
       searchOpen: false,
       quickViewSlug: null,
@@ -128,6 +137,7 @@ export const useStore = create<StoreState>()(
         recent: s.recent,
         points: s.points,
         streak: s.streak,
+        user: s.user,
       }),
     }
   )

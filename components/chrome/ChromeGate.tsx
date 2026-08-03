@@ -5,10 +5,14 @@ import { Footer } from "@/components/chrome/Footer";
 import { BottomTabBar } from "@/components/chrome/BottomTabBar";
 import { GlobalOverlays } from "@/components/overlays/GlobalOverlays";
 
-/** Renders storefront chrome everywhere except /admin, which has its own shell. */
+/** Renders storefront chrome everywhere except surfaces with their own shell. */
+const BARE = ["/admin", "/creator", "/login", "/signup"];
+
 export function ChromeGate({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  if (pathname.startsWith("/admin")) return <>{children}</>;
+  if (BARE.some((p) => pathname === p || pathname.startsWith(p + "/"))) {
+    return <>{children}</>;
+  }
 
   return (
     <>

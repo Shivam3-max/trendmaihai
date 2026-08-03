@@ -17,7 +17,7 @@ export function StatTile({ label, value, delta, up = true }: { label: string; va
   return (
     <div className="rounded-lg border border-border bg-surface p-5 shadow-sm">
       <p className="font-mono text-[0.7rem] uppercase tracking-wider text-text-muted">{label}</p>
-      <p className="mt-2 font-mono text-2xl font-medium tabular-nums md:text-3xl">{value}</p>
+      <p className="mt-2 font-mono text-xl font-medium tabular-nums md:text-2xl">{value}</p>
       {delta && (
         <p className={cn("mt-1 inline-flex items-center gap-0.5 font-mono text-xs", up ? "text-success" : "text-error")}>
           {up ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}

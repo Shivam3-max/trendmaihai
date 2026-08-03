@@ -340,6 +340,65 @@ export function getAdminReviews(): AdminReview[] {
   }));
 }
 
+/* -------- creator portal (mock) -------- */
+export interface CreatorProductStat { id: string; title: string; image: string; price: number; commissionPct: number; sold: number; earned: number; status: "Live" | "Draft"; }
+export interface CreatorReferral { id: string; title: string; image: string; clicks: number; conversions: number; earned: number; link: string; }
+export interface CreatorPayout { id: string; amount: number; date: string; method: string; status: "Paid" | "Processing"; }
+export interface CreatorDashboard {
+  earnings: number; thisMonth: number; clicks: number; conversion: number;
+  sold: number; balance: number;
+  earningsSeries: number[];
+  products: CreatorProductStat[];
+  referrals: CreatorReferral[];
+  payouts: CreatorPayout[];
+}
+
+export function getCreatorDashboard(handle = "aesthetic.aanya"): CreatorDashboard {
+  const creator = getCreator(handle);
+  const owned = creator ? getProductsByIds(creator.pickIds) : getAllProducts().slice(0, 6);
+  const list = owned.length ? owned : getAllProducts().slice(0, 6);
+
+  const products: CreatorProductStat[] = list.map((p, i) => {
+    const commissionPct = 8 + (i % 5) * 2;
+    const sold = 12 + (i * 37) % 220;
+    return {
+      id: p.id, title: p.title, image: p.image, price: p.price,
+      commissionPct, sold,
+      earned: Math.round((p.price * commissionPct / 100) * sold),
+      status: i === list.length - 1 ? "Draft" : "Live",
+    };
+  });
+
+  const referrals: CreatorReferral[] = list.slice(0, 5).map((p, i) => {
+    const clicks = 240 + (i * 613) % 3400;
+    const conversions = Math.round(clicks * (0.03 + (i % 4) * 0.015));
+    const commissionPct = 8 + (i % 5) * 2;
+    return {
+      id: p.id, title: p.title, image: p.image, clicks, conversions,
+      earned: Math.round((p.price * commissionPct / 100) * conversions),
+      link: `trendmehai.com/p/${p.slug}?ref=${handle}`,
+    };
+  });
+
+  const earned = products.reduce((n, p) => n + p.earned, 0);
+  const payouts: CreatorPayout[] = [
+    { id: "PO-2291", amount: 42800, date: "2026-07-01", method: "UPI", status: "Paid" },
+    { id: "PO-2188", amount: 38100, date: "2026-06-01", method: "Bank", status: "Paid" },
+    { id: "PO-2402", amount: 18600, date: "2026-08-01", method: "UPI", status: "Processing" },
+  ];
+
+  return {
+    earnings: earned,
+    thisMonth: Math.round(earned * 0.22),
+    clicks: referrals.reduce((n, r) => n + r.clicks, 0),
+    conversion: 4.6,
+    sold: products.reduce((n, p) => n + p.sold, 0),
+    balance: 18600,
+    earningsSeries: [14, 19, 17, 24, 22, 29, 27, 34, 31, 39, 42, 48].map((n) => n * 1000),
+    products, referrals, payouts,
+  };
+}
+
 /* home section list for the admin Homepage Builder */
 export interface HomeSection { id: string; label: string; group: string; }
 export function getHomeSections(): HomeSection[] {
