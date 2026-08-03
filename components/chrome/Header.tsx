@@ -26,6 +26,7 @@ export function Header() {
   const cart = useStore((s) => s.cart);
   const saved = useStore((s) => s.saved);
   const points = useStore((s) => s.points);
+  const user = useStore((s) => s.user);
   const count = cart.reduce((n, l) => n + l.qty, 0);
 
   useEffect(() => {
@@ -51,7 +52,7 @@ export function Header() {
         </Link>
 
         {/* lenses (desktop) */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden shrink-0 items-center gap-1 lg:flex">
           {LENSES.map((l) => {
             const active = pathname.startsWith(l.href);
             return (
@@ -76,7 +77,7 @@ export function Header() {
         </nav>
 
         {/* actions */}
-        <div className="flex items-center gap-1.5 md:gap-2.5">
+        <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 md:gap-2.5">
           <button
             onClick={() => setSearchOpen(true)}
             className="group hidden min-w-0 shrink items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text-muted transition-colors hover:border-accent/40 hover:text-text md:flex cursor-pointer"
@@ -96,9 +97,11 @@ export function Header() {
             <Search className="h-5 w-5" />
           </button>
 
-          <span className="hidden items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 font-mono text-xs font-medium text-accent sm:inline-flex">
-            <Flame className="h-3.5 w-3.5" /> {points}
-          </span>
+          {user && (
+            <span className="hidden shrink-0 items-center gap-1 rounded-full bg-accent-soft px-2.5 py-1 font-mono text-xs font-medium text-accent sm:inline-flex">
+              <Flame className="h-3.5 w-3.5" /> {points}
+            </span>
+          )}
 
           <Link
             href="/wishlist"

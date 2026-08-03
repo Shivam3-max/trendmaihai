@@ -23,21 +23,13 @@ export function ProfileMenu() {
 
   if (!user) {
     return (
-      <>
-        <Link
-          href="/login"
-          className="hidden items-center gap-1.5 rounded-full bg-text px-4 py-2 text-sm font-semibold text-white transition-transform active:scale-95 sm:inline-flex"
-        >
-          Log in
-        </Link>
-        <Link
-          href="/login"
-          aria-label="Log in"
-          className="grid h-10 w-10 place-items-center rounded-full text-text hover:bg-surface-hover sm:hidden"
-        >
-          <User className="h-5 w-5" />
-        </Link>
-      </>
+      <Link
+        href="/login"
+        className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-text px-3.5 py-2 text-sm font-semibold text-white transition-transform hover:bg-text/90 active:scale-95 sm:px-4"
+      >
+        <User className="h-4 w-4 sm:hidden" />
+        Log in
+      </Link>
     );
   }
 
